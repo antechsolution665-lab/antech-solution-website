@@ -52,8 +52,15 @@ button {
 </div>
 <script>
 function login() {
-  document.getElementById("message").innerText =
-  "Secure login setup is pending. Please configure the backend.";
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+
+  if (username === "admin" && password === "CHANGE-ME") {
+    window.location.href = "dashboard.html";
+  } else {
+    document.getElementById("message").innerText =
+      "Invalid Username or Password";
+  }
 }
 </script>
 </body>
