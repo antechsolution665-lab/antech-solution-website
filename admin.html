@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ANTECH SOLUTION Admin</title>
+<style>
+body {
+  font-family: Arial;
+  background: #eaf2ff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
+.login {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  width: 85%;
+  max-width: 350px;
+  box-shadow: 0 4px 20px #0002;
+}
+h2 { color: #0756b5; text-align: center; }
+input, button {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 13px;
+  margin: 10px 0;
+  border-radius: 6px;
+}
+input { border: 1px solid #aaa; }
+button {
+  background: #0756b5;
+  color: white;
+  border: none;
+  font-size: 16px;
+}
+#message { text-align: center; }
+</style>
+</head>
+<body>
+<div class="login">
+<h2>ANTECH SOLUTION</h2>
+<h3>Admin Login</h3>
+<input id="username" placeholder="Username">
+<input id="password" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+<p id="message"></p>
+</div>
+<script>
+function login() {
+  document.getElementById("message").innerText =
+  "Secure login setup is pending. Please configure the backend.";
+}
+</script>
+</body>
+</html>
