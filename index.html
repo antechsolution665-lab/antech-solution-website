@@ -19,6 +19,73 @@ section{padding:35px 20px;text-align:center}
 footer{background:#063b78;color:white;text-align:center;padding:25px}
 </style>
 </head>
+
+<section id="shop">
+<h2>Our Products</h2>
+<div class="services">
+  <div class="card">
+    <h3>Computer Parts</h3>
+    <p>RAM, SSD, Motherboard</p>
+    <p>Price: Contact for price</p>
+    <button onclick="orderProduct('Computer Parts')">Order Now</button>
+  </div>
+  <div class="card">
+    <h3>Laptop Parts</h3>
+    <p>Laptop Battery, Keyboard, Display</p>
+    <p>Price: Contact for price</p>
+    <button onclick="orderProduct('Laptop Parts')">Order Now</button>
+  </div>
+  <div class="card">
+    <h3>Electronics Components</h3>
+    <p>IC, Capacitor, Resistor</p>
+    <p>Price: Contact for price</p>
+    <button onclick="orderProduct('Electronics Components')">Order Now</button>
+  </div>
+  <div class="card">
+    <h3>Computer Accessories</h3>
+    <p>Mouse, Keyboard, Cable</p>
+    <p>Price: Contact for price</p>
+    <button onclick="orderProduct('Computer Accessories')">Order Now</button>
+  </div>
+  <div class="card">
+    <h3>Other Spare Parts</h3>
+    <p>Various Computer Spare Parts</p>
+    <p>Price: Contact for price</p>
+    <button onclick="orderProduct('Other Spare Parts')">Order Now</button>
+  </div>
+</div>
+</section>
+
+<section id="cart">
+<h2>Shopping Cart</h2>
+<p>Your selected products will be ordered through WhatsApp.</p>
+<p id="cartItems">No products selected.</p>
+<button onclick="sendOrder('916291935463')">Order on Primary WhatsApp</button>
+<button onclick="sendOrder('919330681716')">Order on Secondary WhatsApp</button>
+</section>
+
+<script>
+let cart = [];
+
+function orderProduct(name) {
+  cart.push(name);
+  document.getElementById("cartItems").innerText =
+    cart.join(", ");
+}
+
+function sendOrder(number) {
+  if (cart.length === 0) {
+    alert("Please select a product first.");
+    return;
+  }
+  let message = "Hello ANTECH SOLUTION, I want to order: " +
+    cart.join(", ");
+  window.open(
+    "https://wa.me/" + number + "?text=" +
+    encodeURIComponent(message), "_blank"
+  );
+}
+</script>
 <body>
 <header>
 <h1>ANTECH SOLUTION</h1>
