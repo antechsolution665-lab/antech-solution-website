@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ANTECH SOLUTION Payments</title>
+<style>
+body {
+  font-family: Arial;
+  background: #eef4ff;
+  margin: 0;
+  padding: 15px;
+}
+header {
+  background: #0756b5;
+  color: white;
+  padding: 15px;
+  text-align: center;
+  border-radius: 8px;
+}
+.card {
+  background: white;
+  padding: 18px;
+  margin-top: 18px;
+  border-radius: 10px;
+}
+input, select, button {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  margin: 8px 0;
+}
+button {
+  background: #0756b5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+}
+</style>
+</head>
+<body>
+<header>
+<h2>ANTECH SOLUTION</h2>
+<p>Payment Management</p>
+</header>
+
+<div class="card">
+<h3>Add Test Payment</h3>
+<input id="order" placeholder="Order ID">
+<input id="amount" type="number" min="0" placeholder="Amount in INR">
+<select id="status">
+<option value="Pending">Pending</option>
+<option value="Paid">Paid</option>
+<option value="Failed">Failed</option>
+</select>
+<button onclick="addPayment()">Add Payment</button>
+</div>
+
+<div class="card">
+<h3>Payment List</h3>
+<div id="list">No payments available.</div>
+</div>
+
+<script>
+let payments = [];
+
+function addPayment() {
+ const order = document.getElementById("order").value.trim();
+ const amount = document.getElementById("amount").value;
+ const status = document.getElementById("status").value;
+
+ if (!order || amount === "" || Number(amount) <= 0) {
+   alert("Enter valid payment details");
+   return;
+ }
+
+ payments.push({order, amount, status});
+ showPayments();
+
+ document.getElementById("order").value = "";
+ document.getElementById("amount").value = "";
+}
+
+function showPayments() {
+ const list = document.getElementById("list");
+ list.innerHTML = "";
+
+ payments.forEach(payment => {
+   const item = document.createElement("p");
+   item.textContent =
+     "Order: " + payment.order +
+     " | ₹" + payment.amount +
+     " | Status: " + payment.status;
+   list.append(item);
+ });
+}
+</script>
+</body>
+</html>
