@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ANTECH SOLUTION Products</title>
+<style>
+body {
+  font-family: Arial;
+  background: #eef4ff;
+  margin: 0;
+  padding: 15px;
+}
+header {
+  background: #0756b5;
+  color: white;
+  padding: 15px;
+  text-align: center;
+  border-radius: 8px;
+}
+.card {
+  background: white;
+  padding: 18px;
+  margin-top: 18px;
+  border-radius: 10px;
+}
+input, button {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  margin: 8px 0;
+}
+button {
+  background: #0756b5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+}
+.product {
+  border-bottom: 1px solid #ddd;
+  padding: 12px 0;
+}
+</style>
+</head>
+<body>
+<header>
+<h2>ANTECH SOLUTION</h2>
+<p>Product Management</p>
+</header>
+
+<div class="card">
+<h3>Add New Product</h3>
+<input id="name" placeholder="Product Name">
+<input id="price" type="number" placeholder="Price">
+<input id="stock" type="number" placeholder="Stock Quantity">
+<button onclick="addProduct()">Add Product</button>
+</div>
+
+<div class="card">
+<h3>Product List</h3>
+<div id="list">No products added yet.</div>
+</div>
+
+<script>
+let products = [];
+
+function addProduct() {
+ const name = document.getElementById("name").value.trim();
+ const price = document.getElementById("price").value;
+ const stock = document.getElementById("stock").value;
+
+ if (!name || price === "" || stock === "" ||
+     Number(price) < 0 || Number(stock) < 0) {
+   alert("Please enter valid product details");
+   return;
+ }
+
+ products.push({name, price, stock});
+ showProducts();
+
+ document.getElementById("name").value = "";
+ document.getElementById("price").value = "";
+ document.getElementById("stock").value = "";
+}
+
+function showProducts() {
+ document.getElementById("list").innerHTML = "";
+
+ products.forEach((p, i) => {
+   const item = document.createElement("div");
+   item.className = "product";
+
+   const details = document.createElement("p");
+   details.textContent =
+     p.name + " | ₹" + p.price + " | Stock: " + p.stock;
+
+   const del = document.createElement("button");
+   del.textContent = "Delete";
+   del.onclick = () => {
+     products.splice(i, 1);
+     showProducts();
+   };
+
+   item.append(details, del);
+   document.getElementById("list").append(item);
+ });
+}
+</script>
+</body>
+</html>
