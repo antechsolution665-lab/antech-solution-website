@@ -1,1 +1,125 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ANTECH SOLUTION Orders</title>
+<style>
+body {
+  font-family: Arial;
+  background: #eef4ff;
+  margin: 0;
+  padding: 15px;
+}
+header {
+  background: #0756b5;
+  color: white;
+  padding: 15px;
+  text-align: center;
+  border-radius: 8px;
+}
+.card {
+  background: white;
+  padding: 18px;
+  margin-top: 18px;
+  border-radius: 10px;
+}
+input, select, button {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  margin: 8px 0;
+}
+button {
+  background: #0756b5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+}
+.order {
+  border-bottom: 1px solid #ddd;
+  padding: 12px 0;
+}
+</style>
+</head>
+<body>
+<header>
+<h2>ANTECH SOLUTION</h2>
+<p>Customer Order Management</p>
+</header>
+
+<div class="card">
+<h3>Add Test Order</h3>
+<input id="customer" placeholder="Customer Name">
+<input id="item" placeholder="Product Name">
+<input id="amount" type="number" min="0" placeholder="Order Amount">
+<button onclick="addOrder()">Add Order</button>
+</div>
+
+<div class="card">
+<h3>Order List</h3>
+<div id="list">No orders available.</div>
+</div>
+
+<script>
+let orders = [];
+
+function addOrder() {
+ const customer = document.getElementById("customer").value.trim();
+ const item = document.getElementById("item").value.trim();
+ const amount = document.getElementById("amount").value;
+
+ if (!customer || !item || amount === "" || Number(amount) < 0) {
+   alert("Please enter valid order details");
+   return;
+ }
+
+ orders.push({
+   customer,
+   item,
+   amount,
+   status: "Pending"
+ });
+
+ showOrders();
+
+ document.getElementById("customer").value = "";
+ document.getElementById("item").value = "";
+ document.getElementById("amount").value = "";
+}
+
+function showOrders() {
+ const list = document.getElementById("list");
+ list.innerHTML = "";
+
+ orders.forEach(order => {
+   const box = document.createElement("div");
+   box.className = "order";
+
+   const details = document.createElement("p");
+   details.textContent =
+     order.customer + " | " + order.item +
+     " | ₹" + order.amount;
+
+   const status = document.createElement("select");
+
+   ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"]
+   .forEach(value => {
+     const option = document.createElement("option");
+     option.value = value;
+     option.textContent = value;
+     status.append(option);
+   });
+
+   status.value = order.status;
+   status.onchange = () => order.status = status.value;
+
+   box.append(details, status);
+   list.append(box);
+ });
+}
+</script>
+</body>
+</html>
+
