@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ANTECH SOLUTION Stock</title>
+<style>
+body {
+  font-family: Arial;
+  background: #eef4ff;
+  margin: 0;
+  padding: 15px;
+}
+header {
+  background: #0756b5;
+  color: white;
+  text-align: center;
+  padding: 15px;
+  border-radius: 8px;
+}
+.card {
+  background: white;
+  padding: 18px;
+  margin-top: 18px;
+  border-radius: 10px;
+}
+input, button {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  box-sizing: border-box;
+}
+button {
+  background: #0756b5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+}
+</style>
+</head>
+<body>
+<header>
+<h2>ANTECH SOLUTION</h2>
+<p>Stock Management</p>
+</header>
+
+<div class="card">
+<h3>Update Stock</h3>
+<input id="product" placeholder="Product Name">
+<input id="quantity" type="number" min="0" placeholder="Stock Quantity">
+<button onclick="updateStock()">Update Stock</button>
+</div>
+
+<div class="card">
+<h3>Stock List</h3>
+<div id="list">No stock added yet.</div>
+</div>
+
+<script>
+let stocks = [];
+
+function updateStock() {
+ const name = document.getElementById("product").value.trim();
+ const qty = document.getElementById("quantity").value;
+
+ if (!name || qty === "" || Number(qty) < 0) {
+   alert("Enter valid product and stock quantity");
+   return;
+ }
+
+ const existing = stocks.find(p => p.name === name);
+
+ if (existing) {
+   existing.qty = Number(qty);
+ } else {
+   stocks.push({name, qty: Number(qty)});
+ }
+
+ showStock();
+ document.getElementById("product").value = "";
+ document.getElementById("quantity").value = "";
+}
+
+function showStock() {
+ const list = document.getElementById("list");
+ list.innerHTML = "";
+
+ stocks.forEach(p => {
+   const item = document.createElement("p");
+   item.textContent = p.name + " — Stock: " + p.qty;
+   list.append(item);
+ });
+}
+</script>
+</body>
+</html>
