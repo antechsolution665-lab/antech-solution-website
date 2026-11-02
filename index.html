@@ -1,118 +1,360 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ANTECH SOLUTION</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ANTECH SOLUTION | Electronics Store</title>
+
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;color:#18304d}
-header{background:#063b78;color:white;padding:22px;text-align:center}
-nav{background:#0875c9;padding:15px;text-align:center}
-nav a{color:white;text-decoration:none;margin:12px}
-.hero{padding:75px 20px;text-align:center;background:#eaf5ff}
-.hero h1{font-size:38px;color:#064786}
-button{background:#0875c9;color:white;border:0;padding:13px 25px;border-radius:5px}
-section{padding:35px 20px;text-align:center}
-.services{display:flex;justify-content:center;flex-wrap:wrap;gap:20px}
-.card{background:#f0f7ff;padding:25px;border-radius:10px;width:250px}
-footer{background:#063b78;color:white;text-align:center;padding:25px}
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f2f6fc;
+  color: #172b4d;
+}
+
+header {
+  background: #0756b5;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+header h1 { margin: 5px; }
+
+nav {
+  background: #063e83;
+  padding: 14px;
+  text-align: center;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  margin: 0 10px;
+  font-weight: bold;
+}
+
+.hero {
+  background: linear-gradient(120deg,#0756b5,#2385e8);
+  color: white;
+  padding: 45px 20px;
+  text-align: center;
+}
+
+.hero h2 { font-size: 30px; }
+
+.container {
+  padding: 20px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+  gap: 18px;
+}
+
+.product {
+  background: white;
+  padding: 18px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 2px 8px #0001;
+}
+
+.product .photo {
+  font-size: 65px;
+  padding: 20px;
+  background: #eaf2ff;
+  border-radius: 10px;
+}
+
+.price {
+  color: #0756b5;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+button {
+  background: #0756b5;
+  color: white;
+  border: none;
+  border-radius: 7px;
+  padding: 12px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 8px;
+}
+
+button:hover { background: #063e83; }
+
+.card {
+  background: white;
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 12px;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 13px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.cart-item {
+  border-bottom: 1px solid #ddd;
+  padding: 12px 0;
+}
+
+.remove {
+  background: #d93025;
+}
+
+footer {
+  background: #063e83;
+  color: white;
+  text-align: center;
+  padding: 25px;
+  margin-top: 30px;
+}
 </style>
 </head>
 
-<section id="shop">
-<h2>Our Products</h2>
-<div class="services">
-  <div class="card">
-    <h3>Computer Parts</h3>
-    <p>RAM, SSD, Motherboard</p>
-    <p>Price: Contact for price</p>
-    <button onclick="orderProduct('Computer Parts')">Order Now</button>
-  </div>
-  <div class="card">
-    <h3>Laptop Parts</h3>
-    <p>Laptop Battery, Keyboard, Display</p>
-    <p>Price: Contact for price</p>
-    <button onclick="orderProduct('Laptop Parts')">Order Now</button>
-  </div>
-  <div class="card">
-    <h3>Electronics Components</h3>
-    <p>IC, Capacitor, Resistor</p>
-    <p>Price: Contact for price</p>
-    <button onclick="orderProduct('Electronics Components')">Order Now</button>
-  </div>
-  <div class="card">
-    <h3>Computer Accessories</h3>
-    <p>Mouse, Keyboard, Cable</p>
-    <p>Price: Contact for price</p>
-    <button onclick="orderProduct('Computer Accessories')">Order Now</button>
-  </div>
-  <div class="card">
-    <h3>Other Spare Parts</h3>
-    <p>Various Computer Spare Parts</p>
-    <p>Price: Contact for price</p>
-    <button onclick="orderProduct('Other Spare Parts')">Order Now</button>
-  </div>
-</div>
-</section>
-
-<section id="cart">
-<h2>Shopping Cart</h2>
-<p>Your selected products will be ordered through WhatsApp.</p>
-<p id="cartItems">No products selected.</p>
-<button onclick="sendOrder('916291935463')">Order on Primary WhatsApp</button>
-<button onclick="sendOrder('919330681716')">Order on Secondary WhatsApp</button>
-</section>
-
-<script>
-let cart = [];
-
-function orderProduct(name) {
-  cart.push(name);
-  document.getElementById("cartItems").innerText =
-    cart.join(", ");
-}
-
-function sendOrder(number) {
-  if (cart.length === 0) {
-    alert("Please select a product first.");
-    return;
-  }
-  let message = "Hello ANTECH SOLUTION, I want to order: " +
-    cart.join(", ");
-  window.open(
-    "https://wa.me/" + number + "?text=" +
-    encodeURIComponent(message), "_blank"
-  );
-}
-</script>
 <body>
+
 <header>
 <h1>ANTECH SOLUTION</h1>
 <p>Computer & Electronics Spare Parts</p>
 </header>
+
 <nav>
 <a href="#home">Home</a>
-<a href="#services">Services</a>
+<a href="#products">Products</a>
+<a href="#cart">Cart</a>
 <a href="#contact">Contact</a>
 </nav>
-<div class="hero" id="home">
-<h1>Welcome to ANTECH SOLUTION</h1>
-<p>Your Trusted Computer & Electronics Solution</p>
-<button onclick="document.getElementById('contact').scrollIntoView()">Contact Us</button>
-</div>
-<section id="services">
-<h2>Our Services</h2>
-<div class="services">
-<div class="card"><h3>Computer Parts</h3><p>Quality computer spare parts.</p></div>
-<div class="card"><h3>Electronics Parts</h3><p>Electronics accessories and components.</p></div>
-<div class="card"><h3>Technical Support</h3><p>Professional technical assistance.</p></div>
-</div>
+
+<section class="hero" id="home">
+<h2>Welcome to ANTECH SOLUTION</h2>
+<p>Your Trusted Computer & Electronics Store</p>
+<p>Quality Products | Best Service</p>
 </section>
-<section id="contact">
+
+<div class="container">
+
+<h2 id="products">Our Products</h2>
+
+<div class="products">
+
+<div class="product">
+<div class="photo">⌨️</div>
+<h3>Computer Keyboard</h3>
+<p>Quality Keyboard</p>
+<p class="price">₹500</p>
+<button onclick="addCart('Computer Keyboard',500)">
+Add to Cart
+</button>
+</div>
+
+<div class="product">
+<div class="photo">🖱️</div>
+<h3>Computer Mouse</h3>
+<p>Optical Mouse</p>
+<p class="price">₹300</p>
+<button onclick="addCart('Computer Mouse',300)">
+Add to Cart
+</button>
+</div>
+
+<div class="product">
+<div class="photo">💾</div>
+<h3>SSD Storage</h3>
+<p>Fast SSD Drive</p>
+<p class="price">₹1800</p>
+<button onclick="addCart('SSD Storage',1800)">
+Add to Cart
+</button>
+</div>
+
+<div class="product">
+<div class="photo">🧠</div>
+<h3>Computer RAM</h3>
+<p>Desktop RAM</p>
+<p class="price">₹1500</p>
+<button onclick="addCart('Computer RAM',1500)">
+Add to Cart
+</button>
+</div>
+
+<div class="product">
+<div class="photo">🔌</div>
+<h3>Power Supply</h3>
+<p>Computer PSU</p>
+<p class="price">₹1200</p>
+<button onclick="addCart('Power Supply',1200)">
+Add to Cart
+</button>
+</div>
+
+<div class="product">
+<div class="photo">🖥️</div>
+<h3>Computer Monitor</h3>
+<p>LED Monitor</p>
+<p class="price">₹5500</p>
+<button onclick="addCart('Computer Monitor',5500)">
+Add to Cart
+</button>
+</div>
+
+</div>
+
+<div class="card" id="cart">
+<h2>Shopping Cart</h2>
+<div id="cartItems">Your cart is empty.</div>
+<h3>Total: ₹<span id="total">0</span></h3>
+</div>
+
+<div class="card">
+<h2>Customer Checkout</h2>
+
+<input id="name" placeholder="Your Full Name">
+<input id="phone" type="tel" placeholder="Mobile Number">
+<textarea id="address" placeholder="Delivery Address"></textarea>
+
+<button onclick="placeOrder()">Place Order</button>
+
+<p id="message"></p>
+</div>
+
+<div class="card" id="contact">
 <h2>Contact ANTECH SOLUTION</h2>
-<p>Contact us for products and services.</p>
-</section>
-<footer>© 2026 ANTECH SOLUTION</footer>
+<p>Computer & Electronics Spare Parts</p>
+<p>Phone: 6291935463</p>
+<p>Phone: 9330681716</p>
+</div>
+
+</div>
+
+<footer>
+<h3>ANTECH SOLUTION</h3>
+<p>Thank you for visiting our store.</p>
+</footer>
+
+<script>
+
+let cart = [];
+
+function addCart(name, price) {
+  const existing = cart.find(p => p.name === name);
+
+  if (existing) {
+    existing.quantity++;
+  } else {
+    cart.push({
+      name: name,
+      price: price,
+      quantity: 1
+    });
+  }
+
+  showCart();
+}
+
+function showCart() {
+  const area = document.getElementById("cartItems");
+  area.innerHTML = "";
+
+  let total = 0;
+
+  if (cart.length === 0) {
+    area.textContent = "Your cart is empty.";
+  }
+
+  cart.forEach((product, index) => {
+    total += product.price * product.quantity;
+
+    const div = document.createElement("div");
+    div.className = "cart-item";
+
+    const text = document.createElement("p");
+    text.textContent =
+      product.name + " x " + product.quantity +
+      " = ₹" + (product.price * product.quantity);
+
+    const remove = document.createElement("button");
+    remove.className = "remove";
+    remove.textContent = "Remove";
+    remove.onclick = () => {
+      cart.splice(index, 1);
+      showCart();
+    };
+
+    div.append(text, remove);
+    area.appendChild(div);
+  });
+
+  document.getElementById("total").textContent = total;
+}
+
+function placeOrder() {
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const address = document.getElementById("address").value.trim();
+
+  if (cart.length === 0) {
+    alert("Please add products to cart.");
+    return;
+  }
+
+  if (!name || !phone || !address) {
+    alert("Please enter all customer details.");
+    return;
+  }
+
+  if (!/^[0-9]{10}$/.test(phone)) {
+    alert("Please enter a valid 10 digit mobile number.");
+    return;
+  }
+
+  const order = {
+    customer: name,
+    phone: phone,
+    address: address,
+    products: cart,
+    amount: cart.reduce(
+      (sum, p) => sum + p.price * p.quantity, 0
+    ),
+    status: "Pending"
+  };
+
+  const oldOrders = JSON.parse(
+    localStorage.getItem("antechOrders") || "[]"
+  );
+
+  oldOrders.push(order);
+
+  localStorage.setItem(
+    "antechOrders",
+    JSON.stringify(oldOrders)
+  );
+
+  document.getElementById("message").textContent =
+    "Order saved in this browser. Online order confirmation will be enabled after backend setup.";
+
+  cart = [];
+  showCart();
+}
+
+showCart();
+
+</script>
+
 </body>
 </html>
