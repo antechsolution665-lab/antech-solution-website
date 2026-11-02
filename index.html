@@ -113,8 +113,26 @@ input, textarea {
   padding: 12px 0;
 }
 
-.remove {
-  background: #d93025;
+.remove { background: #d93025; }
+
+.location-btn {
+  background: #168447;
+}
+
+.location-btn:hover {
+  background: #106a38;
+}
+
+#locationStatus {
+  color: #0756b5;
+  font-weight: bold;
+  overflow-wrap: anywhere;
+}
+
+.map-link {
+  display: inline-block;
+  margin: 8px 0;
+  color: #0756b5;
 }
 
 footer {
@@ -158,9 +176,7 @@ footer {
 <h3>Computer Keyboard</h3>
 <p>Quality Keyboard</p>
 <p class="price">₹500</p>
-<button onclick="addCart('Computer Keyboard',500)">
-Add to Cart
-</button>
+<button onclick="addCart('Computer Keyboard',500)">Add to Cart</button>
 </div>
 
 <div class="product">
@@ -168,9 +184,7 @@ Add to Cart
 <h3>Computer Mouse</h3>
 <p>Optical Mouse</p>
 <p class="price">₹300</p>
-<button onclick="addCart('Computer Mouse',300)">
-Add to Cart
-</button>
+<button onclick="addCart('Computer Mouse',300)">Add to Cart</button>
 </div>
 
 <div class="product">
@@ -178,9 +192,7 @@ Add to Cart
 <h3>SSD Storage</h3>
 <p>Fast SSD Drive</p>
 <p class="price">₹1800</p>
-<button onclick="addCart('SSD Storage',1800)">
-Add to Cart
-</button>
+<button onclick="addCart('SSD Storage',1800)">Add to Cart</button>
 </div>
 
 <div class="product">
@@ -188,9 +200,7 @@ Add to Cart
 <h3>Computer RAM</h3>
 <p>Desktop RAM</p>
 <p class="price">₹1500</p>
-<button onclick="addCart('Computer RAM',1500)">
-Add to Cart
-</button>
+<button onclick="addCart('Computer RAM',1500)">Add to Cart</button>
 </div>
 
 <div class="product">
@@ -198,9 +208,7 @@ Add to Cart
 <h3>Power Supply</h3>
 <p>Computer PSU</p>
 <p class="price">₹1200</p>
-<button onclick="addCart('Power Supply',1200)">
-Add to Cart
-</button>
+<button onclick="addCart('Power Supply',1200)">Add to Cart</button>
 </div>
 
 <div class="product">
@@ -208,9 +216,7 @@ Add to Cart
 <h3>Computer Monitor</h3>
 <p>LED Monitor</p>
 <p class="price">₹5500</p>
-<button onclick="addCart('Computer Monitor',5500)">
-Add to Cart
-</button>
+<button onclick="addCart('Computer Monitor',5500)">Add to Cart</button>
 </div>
 
 </div>
@@ -228,9 +234,29 @@ Add to Cart
 <input id="phone" type="tel" placeholder="Mobile Number">
 <textarea id="address" placeholder="Delivery Address"></textarea>
 
-<button onclick="placeOrder()">Place Order</button>
+<h3>📍 Customer Current Location</h3>
+
+<button type="button" class="location-btn"
+onclick="getLocation()">
+📍 Use My Current Location
+</button>
+
+<p id="locationStatus">
+Current location not selected.
+</p>
+
+<a id="mapLink" class="map-link"
+href="#" target="_blank" rel="noopener"
+style="display:none;">
+View Location on Google Maps
+</a>
+
+<button type="button" onclick="placeOrder()">
+Place Order
+</button>
 
 <p id="message"></p>
+
 </div>
 
 <div class="card" id="contact">
@@ -251,7 +277,13 @@ Add to Cart
 
 let cart = [];
 
+let customerLocation = null;
+let customerMapLink = "";
+
+// ADD TO CART
+
 function addCart(name, price) {
+
   const existing = cart.find(p => p.name === name);
 
   if (existing) {
@@ -267,7 +299,10 @@ function addCart(name, price) {
   showCart();
 }
 
+// SHOW CART
+
 function showCart() {
+
   const area = document.getElementById("cartItems");
   area.innerHTML = "";
 
@@ -278,19 +313,23 @@ function showCart() {
   }
 
   cart.forEach((product, index) => {
+
     total += product.price * product.quantity;
 
     const div = document.createElement("div");
     div.className = "cart-item";
 
     const text = document.createElement("p");
+
     text.textContent =
       product.name + " x " + product.quantity +
       " = ₹" + (product.price * product.quantity);
 
     const remove = document.createElement("button");
+
     remove.className = "remove";
     remove.textContent = "Remove";
+
     remove.onclick = () => {
       cart.splice(index, 1);
       showCart();
@@ -298,12 +337,84 @@ function showCart() {
 
     div.append(text, remove);
     area.appendChild(div);
+
   });
 
   document.getElementById("total").textContent = total;
 }
 
+// GET CUSTOMER GPS LOCATION
+
+function getLocation() {
+
+  const status = document.getElementById("locationStatus");
+  const mapLink = document.getElementById("mapLink");
+
+  if (!navigator.geolocation) {
+    status.textContent = "GPS is not supported by this browser.";
+    return;
+  }
+
+  status.textContent = "Getting your location...";
+
+  navigator.geolocation.getCurrentPosition(
+
+    function(position) {
+
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+
+      customerLocation = {
+        latitude: latitude,
+        longitude: longitude
+      };
+
+      customerMapLink =
+        "https://www.google.com/maps?q=" +
+        latitude + "," + longitude;
+
+      status.textContent =
+        "Location selected successfully!";
+
+      mapLink.href = customerMapLink;
+      mapLink.style.display = "inline-block";
+
+    },
+
+    function(error) {
+
+      customerLocation = null;
+      customerMapLink = "";
+
+      mapLink.style.display = "none";
+
+      if (error.code === 1) {
+        status.textContent =
+          "Location permission denied. Please allow location access.";
+      } else if (error.code === 2) {
+        status.textContent =
+          "Location unavailable. Please try again.";
+      } else {
+        status.textContent =
+          "Location request timed out. Please try again.";
+      }
+
+    },
+
+    {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 0
+    }
+
+  );
+
+}
+
+// PLACE ORDER
+
 function placeOrder() {
+
   const name = document.getElementById("name").value.trim();
   const phone = document.getElementById("phone").value.trim();
   const address = document.getElementById("address").value.trim();
@@ -324,32 +435,83 @@ function placeOrder() {
   }
 
   const order = {
+
     customer: name,
+
     phone: phone,
+
     address: address,
-    products: cart,
+
+    location: customerLocation,
+
+    mapLink: customerMapLink,
+
+    products: cart.map(p => ({
+      name: p.name,
+      price: p.price,
+      quantity: p.quantity
+    })),
+
     amount: cart.reduce(
       (sum, p) => sum + p.price * p.quantity, 0
     ),
-    status: "Pending"
+
+    status: "Pending",
+
+    date: new Date().toLocaleString()
+
   };
 
-  const oldOrders = JSON.parse(
-    localStorage.getItem("antechOrders") || "[]"
-  );
+  let oldOrders = [];
+
+  try {
+    oldOrders = JSON.parse(
+      localStorage.getItem("antechOrders") || "[]"
+    );
+
+    if (!Array.isArray(oldOrders)) {
+      oldOrders = [];
+    }
+
+  } catch (error) {
+    alert("Could not read saved orders. Please check browser storage.");
+    return;
+  }
 
   oldOrders.push(order);
 
-  localStorage.setItem(
-    "antechOrders",
-    JSON.stringify(oldOrders)
-  );
+  try {
+
+    localStorage.setItem(
+      "antechOrders",
+      JSON.stringify(oldOrders)
+    );
+
+  } catch (error) {
+
+    alert("Order could not be saved. Please check browser storage.");
+    return;
+
+  }
 
   document.getElementById("message").textContent =
-    "Order saved in this browser. Online order confirmation will be enabled after backend setup.";
+    "Order saved successfully! Thank you for shopping with ANTECH SOLUTION.";
 
   cart = [];
   showCart();
+
+  document.getElementById("name").value = "";
+  document.getElementById("phone").value = "";
+  document.getElementById("address").value = "";
+
+  customerLocation = null;
+  customerMapLink = "";
+
+  document.getElementById("locationStatus").textContent =
+    "Current location not selected.";
+
+  document.getElementById("mapLink").style.display = "none";
+
 }
 
 showCart();
