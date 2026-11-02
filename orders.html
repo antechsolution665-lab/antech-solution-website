@@ -63,7 +63,7 @@ button {
 </div>
 
 <script>
-let orders = [];
+let orders = JSON.parse(localStorage.getItem("antechOrders")) || [];
 
 function addOrder() {
  const customer = document.getElementById("customer").value.trim();
@@ -82,7 +82,7 @@ function addOrder() {
    status: "Pending"
  });
 
- showOrders();
+ localStorage.setItem("antechOrders", JSON.stringify(orders)); showOrders();
 
  document.getElementById("customer").value = "";
  document.getElementById("item").value = "";
@@ -90,6 +90,7 @@ function addOrder() {
 }
 
 function showOrders() {
+  orders = JSON.parse(localStorage.getItem("antechOrders")) || [];
  const list = document.getElementById("list");
  list.innerHTML = "";
 
