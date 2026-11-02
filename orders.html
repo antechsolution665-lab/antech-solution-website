@@ -95,6 +95,18 @@ footer {
 </div>
 
 <div class="card">
+  <h3>Admin Dashboard</h3>
+
+  <p>Total Orders: <strong id="totalOrders">0</strong></p>
+
+  <p>Pending Orders: <strong id="pendingOrders">0</strong></p>
+
+  <p>Delivered Orders: <strong id="deliveredOrders">0</strong></p>
+
+  <p>Total Sales: ₹<strong id="totalSales">0</strong></p>
+</div>
+
+<div class="card">
   <h3>Order List</h3>
   <div id="list">Loading orders...</div>
 </div>
@@ -146,6 +158,16 @@ function addOrder() {
 }
 
 function showOrders() {
+  document.getElementById("totalOrders").textContent = orders.length;
+
+document.getElementById("pendingOrders").textContent =
+  orders.filter(order => order.status === "Pending").length;
+
+document.getElementById("deliveredOrders").textContent =
+  orders.filter(order => order.status === "Delivered").length;
+
+document.getElementById("totalSales").textContent =
+  orders.reduce((total, order) => total + Number(order.amount), 0);
   const list = document.getElementById("list");
   list.innerHTML = "";
 
