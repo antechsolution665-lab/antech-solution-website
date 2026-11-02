@@ -5,122 +5,254 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ANTECH SOLUTION Orders</title>
+
 <style>
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   background: #eef4ff;
   margin: 0;
   padding: 15px;
 }
+
 header {
   background: #0756b5;
   color: white;
-  padding: 15px;
+  padding: 20px;
   text-align: center;
-  border-radius: 8px;
+  border-radius: 10px;
 }
+
 .card {
   background: white;
   padding: 18px;
   margin-top: 18px;
   border-radius: 10px;
+  box-shadow: 0 2px 8px #0001;
 }
+
 input, select, button {
   width: 100%;
-  box-sizing: border-box;
   padding: 12px;
   margin: 8px 0;
+  border-radius: 6px;
 }
+
+input, select {
+  border: 1px solid #ccc;
+}
+
 button {
   background: #0756b5;
   color: white;
   border: none;
-  border-radius: 6px;
+  cursor: pointer;
 }
+
+.delete {
+  background: #d93025;
+}
+
 .order {
-  border-bottom: 1px solid #ddd;
-  padding: 12px 0;
+  border: 1px solid #ddd;
+  padding: 12px;
+  margin: 12px 0;
+  border-radius: 8px;
+  overflow-wrap: anywhere;
+}
+
+.order p {
+  margin: 8px 0;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  color: #555;
 }
 </style>
 </head>
+
 <body>
+
 <header>
-<h2>ANTECH SOLUTION</h2>
-<p>Customer Order Management</p>
+  <h2>ANTECH SOLUTION</h2>
+  <p>Customer Order Management</p>
 </header>
 
 <div class="card">
-<h3>Add Test Order</h3>
-<input id="customer" placeholder="Customer Name">
-<input id="item" placeholder="Product Name">
-<input id="amount" type="number" min="0" placeholder="Order Amount">
-<button onclick="addOrder()">Add Order</button>
+  <h3>Add New Order</h3>
+
+  <input id="customer" placeholder="Customer Name">
+  <input id="item" placeholder="Product Name">
+  <input id="amount" type="number" min="0" step="0.01"
+  placeholder="Order Amount">
+
+  <button onclick="addOrder()">Add Order</button>
 </div>
 
 <div class="card">
-<h3>Order List</h3>
-<div id="list">No orders available.</div>
+  <h3>Order List</h3>
+  <div id="list">Loading orders...</div>
 </div>
 
+<footer>
+  ANTECH SOLUTION
+  <p>Computer & Electronics Spare Parts</p>
+</footer>
+
 <script>
-let orders = JSON.parse(localStorage.getItem("antechOrders")) || [];
+
+let orders = JSON.parse(
+  localStorage.getItem("antechOrders") || "[]"
+);
+
+function saveOrders() {
+  localStorage.setItem(
+    "antechOrders",
+    JSON.stringify(orders)
+  );
+}
 
 function addOrder() {
- const customer = document.getElementById("customer").value.trim();
- const item = document.getElementById("item").value.trim();
- const amount = document.getElementById("amount").value;
+  const customer = document.getElementById("customer").value.trim();
+  const item = document.getElementById("item").value.trim();
+  const amount = document.getElementById("amount").value;
 
- if (!customer || !item || amount === "" || Number(amount) < 0) {
-   alert("Please enter valid order details");
-   return;
- }
+  if (!customer || !item || amount === "" ||
+      !Number.isFinite(Number(amount)) || Number(amount) < 0) {
+    alert("Please enter valid order details");
+    return;
+  }
 
- orders.push({
-   customer,
-   item,
-   amount,
-   status: "Pending"
- });
+  orders.push({
+    customer: customer,
+    item: item,
+    amount: amount,
+    status: "Pending"
+  });
 
- localStorage.setItem("antechOrders", JSON.stringify(orders)); showOrders();
+  saveOrders();
+  showOrders();
 
- document.getElementById("customer").value = "";
- document.getElementById("item").value = "";
- document.getElementById("amount").value = "";
+  document.getElementById("customer").value = "";
+  document.getElementById("item").value = "";
+  document.getElementById("amount").value = "";
+
+  alert("Order added successfully!");
 }
 
 function showOrders() {
-  orders = JSON.parse(localStorage.getItem("antechOrders")) || [];
- const list = document.getElementById("list");
- list.innerHTML = "";
+  const list = document.getElementById("list");
+  list.innerHTML = "";
 
- orders.forEach(order => {
-   const box = document.createElement("div");
-   box.className = "order";
+  if (orders.length === 0) {
+    list.textContent = "No orders available.";
+    return;
+  }
 
-   const details = document.createElement("p");
-   details.textContent =
-     order.customer + " | " + order.item +
-     " | ₹" + order.amount;
+  orders.forEach((order, index) => {
+    const box = document.createElement("div");
+    box.className = "order";
 
-   const status = document.createElement("select");
+    const customer = document.createElement("p");
+    customer.textContent = "Customer: " + order.customer;
 
-   ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"]
-   .forEach(value => {
-     const option = document.createElement("option");
-     option.value = value;
-     option.textContent = value;
-     status.append(option);
-   });
+    const item = document.createElement("p");
+    item.textContent = "Product: " + order.item;
 
-   status.value = order.status;
-   status.onchange = () => order.status = status.value;
+    const amount = document.createElement("p");
+    amount.textContent = "Amount: ₹" + order.amount;
 
-   box.append(details, status);
-   list.append(box);
- });
+    const statusText = document.createElement("p");
+    statusText.textContent = "Status: " + order.status;
+
+    const status = document.createElement("select");
+
+    ["Pending", "Processing", "Shipped",
+     "Delivered", "Cancelled"].forEach(value => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = value;
+      status.appendChild(option);
+    });
+
+    status.value = order.status || "Pending";
+
+    status.onchange = () => {
+      order.status = status.value;
+      saveOrders();
+      showOrders();
+    };
+
+    const editButton = document.createElement("button");
+    editButton.textContent = "Edit Order";
+    editButton.onclick = () => editOrder(index);
+
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete Order";
+    deleteButton.className = "delete";
+    deleteButton.onclick = () => deleteOrder(index);
+
+    box.append(
+      customer,
+      item,
+      amount,
+      statusText,
+      status,
+      editButton,
+      deleteButton
+    );
+
+    list.appendChild(box);
+  });
 }
+
+function editOrder(index) {
+  const order = orders[index];
+
+  const customer = prompt("Customer Name:", order.customer);
+  if (customer === null) return;
+
+  const item = prompt("Product Name:", order.item);
+  if (item === null) return;
+
+  const amount = prompt("Order Amount:", order.amount);
+  if (amount === null) return;
+
+  if (!customer.trim() || !item.trim() ||
+      amount.trim() === "" ||
+      !Number.isFinite(Number(amount)) ||
+      Number(amount) < 0) {
+    alert("Please enter valid details");
+    return;
+  }
+
+  order.customer = customer.trim();
+  order.item = item.trim();
+  order.amount = amount;
+
+  saveOrders();
+  showOrders();
+
+  alert("Order updated successfully!");
+}
+
+function deleteOrder(index) {
+  if (confirm("Are you sure you want to delete this order?")) {
+    orders.splice(index, 1);
+    saveOrders();
+    showOrders();
+    alert("Order deleted successfully!");
+  }
+}
+
+showOrders();
+
 </script>
+
 </body>
 </html>
-
