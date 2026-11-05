@@ -10,7 +10,7 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "antech-order",
+      "database_name": "antech_store_db",
       "database_id": "d32de66a-a3e9-4425-ae4c-cfd9884dfc10"
     }
   ]
