@@ -1,17 +1,19 @@
+
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "twilight-dew-1ae0",
   "main": "src/index.js",
   "compatibility_date": "2026-11-04",
   "assets": {
-    "directory": "./public",
-    "binding": "ASSETS"
+    "directory": ".",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
   },
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "antech_store_db",
-      "database_id": "d32de66a-a3e9-4425-ae4c-cfd9884dfc10"
+      "database_id": "6183f1eb-2326-45ec-99eb-d72449de4edf"
     }
   ]
 }
