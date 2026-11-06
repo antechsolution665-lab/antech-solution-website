@@ -93,6 +93,11 @@ button {
 
 button:hover { background: #063e83; }
 
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .card {
   background: white;
   padding: 20px;
@@ -115,13 +120,9 @@ input, textarea {
 
 .remove { background: #d93025; }
 
-.location-btn {
-  background: #168447;
-}
+.location-btn { background: #168447; }
 
-.location-btn:hover {
-  background: #106a38;
-}
+.location-btn:hover { background: #106a38; }
 
 #locationStatus {
   color: #0756b5;
@@ -133,6 +134,11 @@ input, textarea {
   display: inline-block;
   margin: 8px 0;
   color: #0756b5;
+}
+
+#message {
+  font-weight: bold;
+  overflow-wrap: anywhere;
 }
 
 footer {
@@ -236,14 +242,11 @@ footer {
 
 <h3>📍 Customer Current Location</h3>
 
-<button type="button" class="location-btn"
-onclick="getLocation()">
+<button type="button" class="location-btn" onclick="getLocation()">
 📍 Use My Current Location
 </button>
 
-<p id="locationStatus">
-Current location not selected.
-</p>
+<p id="locationStatus">Current location not selected.</p>
 
 <a id="mapLink" class="map-link"
 href="#" target="_blank" rel="noopener"
@@ -251,7 +254,7 @@ style="display:none;">
 View Location on Google Maps
 </a>
 
-<button type="button" onclick="placeOrder()">
+<button type="button" id="orderButton" onclick="placeOrder()">
 Place Order
 </button>
 
@@ -276,7 +279,6 @@ Place Order
 <script>
 
 let cart = [];
-
 let customerLocation = null;
 let customerMapLink = "";
 
@@ -373,8 +375,7 @@ function getLocation() {
         "https://www.google.com/maps?q=" +
         latitude + "," + longitude;
 
-      status.textContent =
-        "Location selected successfully!";
+      status.textContent = "Location selected successfully!";
 
       mapLink.href = customerMapLink;
       mapLink.style.display = "inline-block";
@@ -411,13 +412,16 @@ function getLocation() {
 
 }
 
-// PLACE ORDER
+// PLACE ORDER - SAVE TO CLOUDFLARE D1 DATABASE
 
-function placeOrder() {
+async function placeOrder() {
 
   const name = document.getElementById("name").value.trim();
   const phone = document.getElementById("phone").value.trim();
   const address = document.getElementById("address").value.trim();
+
+  const message = document.getElementById("message");
+  const orderButton = document.getElementById("orderButton");
 
   if (cart.length === 0) {
     alert("Please add products to cart.");
@@ -437,12 +441,12 @@ function placeOrder() {
   const order = {
 
     customer: name,
-
     phone: phone,
-
     address: address,
 
-    location: customerLocation,
+    location: customerLocation
+      ? customerLocation.latitude + "," + customerLocation.longitude
+      : "",
 
     mapLink: customerMapLink,
 
@@ -456,61 +460,65 @@ function placeOrder() {
       (sum, p) => sum + p.price * p.quantity, 0
     ),
 
-    status: "Pending",
-
-    date: new Date().toLocaleString()
+    status: "Pending"
 
   };
 
-  let oldOrders = [];
+  orderButton.disabled = true;
+  orderButton.textContent = "Submitting Order...";
+  message.textContent = "Please wait. Saving your order...";
 
   try {
-    oldOrders = JSON.parse(
-      localStorage.getItem("antechOrders") || "[]"
-    );
 
-    if (!Array.isArray(oldOrders)) {
-      oldOrders = [];
+    const response = await fetch("/api/orders", {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify(order)
+
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      throw new Error(result.message || "Order submission failed.");
     }
 
+    message.textContent =
+      "Order saved successfully in ANTECH Database! Order ID: " +
+      (result.orderId || "Confirmed");
+
+    cart = [];
+    showCart();
+
+    document.getElementById("name").value = "";
+    document.getElementById("phone").value = "";
+    document.getElementById("address").value = "";
+
+    customerLocation = null;
+    customerMapLink = "";
+
+    document.getElementById("locationStatus").textContent =
+      "Current location not selected.";
+
+    document.getElementById("mapLink").style.display = "none";
+
   } catch (error) {
-    alert("Could not read saved orders. Please check browser storage.");
-    return;
-  }
 
-  oldOrders.push(order);
+    message.textContent =
+      "Order failed: " + error.message +
+      ". Your cart has been preserved.";
 
-  try {
+  } finally {
 
-    localStorage.setItem(
-      "antechOrders",
-      JSON.stringify(oldOrders)
-    );
-
-  } catch (error) {
-
-    alert("Order could not be saved. Please check browser storage.");
-    return;
+    orderButton.disabled = false;
+    orderButton.textContent = "Place Order";
 
   }
-
-  document.getElementById("message").textContent =
-    "Order saved successfully! Thank you for shopping with ANTECH SOLUTION.";
-
-  cart = [];
-  showCart();
-
-  document.getElementById("name").value = "";
-  document.getElementById("phone").value = "";
-  document.getElementById("address").value = "";
-
-  customerLocation = null;
-  customerMapLink = "";
-
-  document.getElementById("locationStatus").textContent =
-    "Current location not selected.";
-
-  document.getElementById("mapLink").style.display = "none";
 
 }
 
