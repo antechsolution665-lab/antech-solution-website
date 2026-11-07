@@ -3,6 +3,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
+    // API health check
     if (request.method === "GET" && url.pathname === "/api/health") {
       return Response.json({
         success: true,
@@ -10,6 +11,144 @@ export default {
       });
     }
 
+    // Admin authentication
+    const isAdmin = () => {
+      return Boolean(env.ADMIN_PASSWORD) &&
+        request.headers.get("x-admin-password") === env.ADMIN_PASSWORD;
+    };
+
+    // Get all orders (Admin only)
+    if (request.method === "GET" && url.pathname === "/api/orders") {
+      if (!isAdmin()) {
+        return Response.json(
+          { success: false, message: "Unauthorized" },
+          { status: 401 }
+        );
+      }
+
+      try {
+        const result = await env.DB.prepare(`
+          SELECT
+            id,
+            customer_name AS customer,
+            phone,
+            address,
+            total_amount AS amount,
+            status,
+            created_at,
+            products,
+            location,
+            map_link
+          FROM orders
+          ORDER BY id DESC
+        `).all();
+
+        return Response.json({
+          success: true,
+          orders: result.results
+        });
+      } catch (error) {
+        console.error("Get orders error:", error);
+        return Response.json(
+          { success: false, message: "Could not load orders" },
+          { status: 500 }
+        );
+      }
+    }
+
+    // Update order status (Admin only)
+    const updateMatch = url.pathname.match(/^\/api\/orders\/(\d+)$/);
+
+    if (request.method === "PATCH" && updateMatch) {
+      if (!isAdmin()) {
+        return Response.json(
+          { success: false, message: "Unauthorized" },
+          { status: 401 }
+        );
+      }
+
+      try {
+        const id = Number(updateMatch[1]);
+        const data = await request.json();
+
+        const allowedStatuses = [
+          "Pending",
+          "Processing",
+          "Shipped",
+          "Delivered",
+          "Cancelled"
+        ];
+
+        if (!allowedStatuses.includes(data.status)) {
+          return Response.json(
+            { success: false, message: "Invalid order status" },
+            { status: 400 }
+          );
+        }
+
+        const result = await env.DB.prepare(`
+          UPDATE orders
+          SET status = ?
+          WHERE id = ?
+        `).bind(data.status, id).run();
+
+        if (result.meta.changes === 0) {
+          return Response.json(
+            { success: false, message: "Order not found" },
+            { status: 404 }
+          );
+        }
+
+        return Response.json({
+          success: true,
+          message: "Order status updated"
+        });
+      } catch (error) {
+        console.error("Update order error:", error);
+        return Response.json(
+          { success: false, message: "Could not update order" },
+          { status: 500 }
+        );
+      }
+    }
+
+    // Delete order (Admin only)
+    if (request.method === "DELETE" && updateMatch) {
+      if (!isAdmin()) {
+        return Response.json(
+          { success: false, message: "Unauthorized" },
+          { status: 401 }
+        );
+      }
+
+      try {
+        const id = Number(updateMatch[1]);
+
+        const result = await env.DB.prepare(`
+          DELETE FROM orders WHERE id = ?
+        `).bind(id).run();
+
+        if (result.meta.changes === 0) {
+          return Response.json(
+            { success: false, message: "Order not found" },
+            { status: 404 }
+          );
+        }
+
+        return Response.json({
+          success: true,
+          message: "Order deleted successfully"
+        });
+      } catch (error) {
+        console.error("Delete order error:", error);
+        return Response.json(
+          { success: false, message: "Could not delete order" },
+          { status: 500 }
+        );
+      }
+    }
+
+    // Save customer order
     if (request.method === "POST" && url.pathname === "/api/orders") {
       try {
         const data = await request.json();
